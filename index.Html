@@ -1,535 +1,392 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MyTube</title>
-
-<style>
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    background:#0f0f0f;
-    color:white;
-    font-family:Arial,sans-serif;
-}
-
-/* TOP BAR */
-
-.top{
-    height:65px;
-    background:#181818;
-    display:flex;
-    align-items:center;
-    gap:20px;
-    padding:10px 18px;
-    position:sticky;
-    top:0;
-    z-index:10;
-}
-
-.logo{
-    font-size:24px;
-    font-weight:bold;
-    white-space:nowrap;
-}
-
-.search{
-    flex:1;
-    max-width:650px;
-    display:flex;
-}
-
-.search input{
-    flex:1;
-    padding:13px;
-    background:#121212;
-    border:1px solid #444;
-    color:white;
-    border-radius:25px 0 0 25px;
-    font-size:16px;
-}
-
-.search button{
-    width:60px;
-    border:0;
-    border-radius:0 25px 25px 0;
-    background:#333;
-    color:white;
-    font-size:18px;
-}
-
-/* LAYOUT */
-
-.layout{
-    display:flex;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-    width:220px;
-    min-height:calc(100vh - 65px);
-    background:#181818;
-    padding:15px;
-    position:fixed;
-}
-
-.sidebar button{
-    width:100%;
-    background:none;
-    border:0;
-    color:white;
-    text-align:left;
-    padding:14px;
-    border-radius:8px;
-    font-size:15px;
-}
-
-.sidebar button:hover{
-    background:#333;
-}
-
-/* CONTENT */
-
-.content{
-    margin-left:220px;
-    width:calc(100% - 220px);
-    padding:20px;
-}
-
-/* CATEGORY */
-
-.categories{
-    display:flex;
-    gap:10px;
-    overflow:auto;
-    margin-bottom:20px;
-}
-
-.categories button{
-    background:#272727;
-    color:white;
-    border:0;
-    padding:9px 16px;
-    border-radius:8px;
-    white-space:nowrap;
-}
-
-/* VIDEO GRID */
-
-.grid{
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fit,minmax(250px,1fr));
-    gap:25px 18px;
-}
-
-.card{
-    cursor:pointer;
-}
-
-.thumbnail{
-    width:100%;
-    aspect-ratio:16/9;
-    background:#272727;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.thumbnail img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.card h3{
-    font-size:16px;
-    margin:9px 0 5px;
-}
-
-.card p{
-    margin:0;
-    color:#aaa;
-    font-size:13px;
-}
-
-/* PLAYER */
-
-#playerPage{
-    display:none;
-}
-
-.videoPlayer{
-    width:100%;
-    max-width:1000px;
-    margin:auto;
-    aspect-ratio:16/9;
-    background:black;
-}
-
-.videoPlayer iframe{
-    width:100%;
-    height:100%;
-    border:0;
-}
-
-.back{
-    background:#333;
-    color:white;
-    border:0;
-    padding:10px 18px;
-    border-radius:7px;
-    margin-bottom:15px;
-}
-
-/* MOBILE */
-
-@media(max-width:700px){
-
-    .sidebar{
-        display:none;
-    }
-
-    .content{
-        margin-left:0;
-        width:100%;
-        padding:12px;
-    }
-
-    .top{
-        gap:8px;
-        padding:8px;
-    }
-
-    .logo{
-        font-size:19px;
-    }
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-}
-</style>
-</head>
-
-
-<body>
-
-
-<!-- TOP BAR -->
-
-<div class="top">
-
-<div class="logo">
-▶ MyTube
-</div>
-
-<div class="search">
-
-<input
-id="search"
-placeholder="Search videos..."
->
-
-<button onclick="searchVideos()">
-🔍
-</button>
-
-</div>
-
-</div>
-
-
-
-<div class="layout">
-
-
-<!-- SIDEBAR -->
-
-<div class="sidebar">
-
-<button onclick="showHome()">
-🏠 Home
-</button>
-
-<button>
-🔥 Trending
-</button>
-
-<button>
-📺 Subscriptions
-</button>
-
-<button>
-📚 Library
-</button>
-
-<button>
-🕘 History
-</button>
-
-</div>
-
-
-
-<!-- HOME -->
-
-<div class="content" id="homePage">
-
-
-<div class="categories">
-
-<button>All</button>
-<button>Music</button>
-<button>Gaming</button>
-<button>Movies</button>
-<button>News</button>
-<button>Education</button>
-<button>Live</button>
-
-</div>
-
-
-
-<div class="grid" id="videoGrid">
-
-
-<!-- VIDEO 1 -->
-
-<div class="card"
-onclick="openVideo('dQw4w9WgXcQ','Sample Video')">
-
-<div class="thumbnail">
-
-<img
-src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
->
-
-</div>
-
-<h3>Sample YouTube Video</h3>
-
-<p>MyTube • 1M views</p>
-
-</div>
-
-
-
-<!-- VIDEO 2 -->
-
-<div class="card"
-onclick="openVideo('aqz-KE-bpKQ','Big Buck Bunny')">
-
-<div class="thumbnail">
-
-<img
-src="https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg"
->
-
-</div>
-
-<h3>Big Buck Bunny</h3>
-
-<p>MyTube • 500K views</p>
-
-</div>
-
-
-
-<!-- VIDEO 3 -->
-
-<div class="card"
-onclick="openVideo('ysz5S6PUM-U','Test Video')">
-
-<div class="thumbnail">
-
-<img
-src="https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg"
->
-
-</div>
-
-<h3>Test Video</h3>
-
-<p>MyTube • 200K views</p>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-
-<!-- PLAYER PAGE -->
-
-<div class="content" id="playerPage">
-
-<button class="back"
-onclick="showHome()">
-
-← Back
-
-</button>
-
-
-<h2 id="videoTitle">
-Video
-</h2>
-
-
-<div class="videoPlayer">
-
-<iframe
-id="videoFrame"
-allow="autoplay; encrypted-media; picture-in-picture"
-allowfullscreen>
-</iframe>
-
-</div>
-
-
-<h3>Playback Speed</h3>
-
-<button onclick="setSpeed(1)">
-1×
-</button>
-
-<button onclick="setSpeed(1.25)">
-1.25×
-</button>
-
-<button onclick="setSpeed(1.5)">
-1.5×
-</button>
-
-<button onclick="setSpeed(1.75)">
-1.75×
-</button>
-
-<button onclick="setSpeed(2)">
-2×
-</button>
-
-</div>
-
-
-</div>
-
-
-
-<script>
-
-let currentVideo="";
-
-
-function openVideo(id,title){
-
-    currentVideo=id;
-
-    document.getElementById("homePage")
-    .style.display="none";
-
-    document.getElementById("playerPage")
-    .style.display="block";
-
-
-    document.getElementById("videoTitle")
-    .innerText=title;
-
-
-    document.getElementById("videoFrame")
-    .src=
-    "https://www.youtube.com/embed/"
-    +id+
-    "?enablejsapi=1&playsinline=1";
-
-}
-
-
-function showHome(){
-
-    document.getElementById("playerPage")
-    .style.display="none";
-
-    document.getElementById("homePage")
-    .style.display="block";
-
-    document.getElementById("videoFrame")
-    .src="";
-
-}
-
-
-function setSpeed(speed){
-
-    if(!currentVideo){
-
-        return;
-
-    }
-
-
-    document.getElementById("videoFrame")
-    .contentWindow
-    .postMessage(
-
-        JSON.stringify({
-
-            event:"command",
-
-            func:"setPlaybackRate",
-
-            args:[speed]
-
-        }),
-
-        "*"
-
-    );
-
-}
-
-
-function searchVideos(){
-
-    let text=
-    document.getElementById("search")
-    .value
-    .toLowerCase();
-
-    let cards=
-    document.querySelectorAll(".card");
-
-
-    cards.forEach(card=>{
-
-        let title=
-        card.innerText.toLowerCase();
-
-        if(title.includes(text)){
-
-            card.style.display="block";
-
-        }else{
-
-            card.style.display="none";
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TubeMax Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
+        body {
+            background: #0f0f0f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .logo span {
+            color: white;
+        }
+
+        .video-wrapper {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            position: relative;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls {
+            margin-top: 15px;
+            background: #222;
+            padding: 15px;
+            border-radius: 30px;
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .play-btn {
+            background: #333;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .play-btn:hover {
+            background: #444;
+        }
+
+        .time {
+            color: #aaa;
+            font-size: 14px;
+            min-width: 100px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 5px;
+            background: #444;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #ff0000;
+            border-radius: 5px;
+        }
+
+        .speed-controls {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .speed-btn {
+            background: #333;
+            border: none;
+            color: #aaa;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .speed-btn:hover {
+            background: #444;
+            color: white;
+        }
+
+        .speed-btn.active {
+            background: #ff0000;
+            color: white;
+        }
+
+        .file-input-wrapper {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .file-input-wrapper input {
+            display: none;
+        }
+
+        .file-input-wrapper label {
+            background: #ff0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .file-input-wrapper label:hover {
+            background: #cc0000;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 12px;
+            color: #555;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">▶ <span>TubeMax</span></div>
+        <div style="color:#666; font-size:14px;">⚡ 8x Speed</div>
+    </div>
+
+    <!-- Video Player -->
+    <div class="video-wrapper">
+        <video id="videoPlayer" controls style="display:none;"></video>
+        <div id="placeholder" style="display:flex; justify-content:center; align-items:center; height:100%; color:#666; font-size:18px; flex-direction:column; gap:10px;">
+            <div style="font-size:50px;">🎬</div>
+            <div>Click below to select video</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="top-controls">
+            <button class="play-btn" id="playBtn">▶</button>
+            <span class="time" id="timeDisplay">0:00 / 0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="speed-controls">
+            <button class="speed-btn active" data-speed="1">1x</button>
+            <button class="speed-btn" data-speed="2">2x</button>
+            <button class="speed-btn" data-speed="3">3x</button>
+            <button class="speed-btn" data-speed="4">4x</button>
+            <button class="speed-btn" data-speed="5">5x</button>
+            <button class="speed-btn" data-speed="6">6x</button>
+            <button class="speed-btn" data-speed="7">7x</button>
+            <button class="speed-btn" data-speed="8">8x</button>
+        </div>
+    </div>
+
+    <!-- File Upload -->
+    <div class="file-input-wrapper">
+        <input type="file" id="fileInput" accept="video/*">
+        <label for="fileInput">📁 Select Video File</label>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-code"></i> GitHub Ready — MX-style speed up to 8x
+    </div>
+</div>
+
+<script>
+    // ========== DOM ELEMENTS ==========
+    const video = document.getElementById('videoPlayer');
+    const placeholder = document.getElementById('placeholder');
+    const playBtn = document.getElementById('playBtn');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const progressBar = document.getElementById('progressBar');
+    const fileInput = document.getElementById('fileInput');
+    const speedBtns = document.querySelectorAll('.speed-btn');
+
+    let isDragging = false;
+
+    // ========== HELPER FUNCTIONS ==========
+    function formatTime(sec) {
+        if (isNaN(sec) || sec < 0) return '0:00';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function updateUI() {
+        if (!video.duration || isNaN(video.duration)) {
+            timeDisplay.textContent = '0:00 / 0:00';
+            progressFill.style.width = '0%';
+            return;
+        }
+        const current = video.currentTime;
+        const duration = video.duration;
+        const percent = (current / duration) * 100;
+        timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+        progressFill.style.width = `${Math.min(percent, 100)}%`;
+    }
+
+    function togglePlay() {
+        if (video.paused) {
+            video.play().catch(err => console.log('Play error:', err));
+        } else {
+            video.pause();
+        }
+    }
+
+    function updatePlayIcon() {
+        playBtn.textContent = video.paused ? '▶' : '⏸';
+    }
+
+    function setSpeed(speed) {
+        video.playbackRate = speed;
+        speedBtns.forEach(btn => {
+            const val = parseFloat(btn.dataset.speed);
+            btn.classList.toggle('active', Math.abs(val - speed) < 0.01);
+        });
+    }
+
+    function seek(e) {
+        const rect = progressBar.getBoundingClientRect();
+        let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (!clientX) return;
+        let x = (clientX - rect.left) / rect.width;
+        x = Math.min(Math.max(x, 0), 1);
+        if (video.duration && !isNaN(video.duration)) {
+            video.currentTime = x * video.duration;
+        }
+        progressFill.style.width = `${x * 100}%`;
+        if (video.duration) {
+            timeDisplay.textContent = `${formatTime(x * video.duration)} / ${formatTime(video.duration)}`;
+        }
+    }
+
+    // ========== FILE UPLOAD ==========
+    fileInput.addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        video.src = url;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        video.load();
+        video.play().catch(err => console.log('Play error:', err));
+        
+        // Reset speed to 1x
+        setSpeed(1);
     });
 
-}
+    // ========== EVENT LISTENERS ==========
+    playBtn.addEventListener('click', togglePlay);
+    video.addEventListener('click', togglePlay);
+    video.addEventListener('play', updatePlayIcon);
+    video.addEventListener('pause', updatePlayIcon);
 
+    video.addEventListener('timeupdate', () => {
+        if (!isDragging) updateUI();
+    });
+
+    video.addEventListener('loadedmetadata', () => {
+        updateUI();
+        setSpeed(1);
+    });
+
+    video.addEventListener('ended', () => {
+        updatePlayIcon();
+        updateUI();
+    });
+
+    // Speed Buttons
+    speedBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            setSpeed(parseFloat(btn.dataset.speed));
+        });
+    });
+
+    // Progress Bar - Mouse
+    progressBar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        seek(e);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) seek(e);
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (isDragging) {
+            isDragging = false;
+            seek(e);
+            updateUI();
+        }
+    });
+
+    // Progress Bar - Touch
+    progressBar.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isDragging = true;
+        seek(e);
+    }, { passive: false });
+
+    progressBar.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (isDragging) seek(e);
+    }, { passive: false });
+
+    progressBar.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (isDragging) {
+            isDragging = false;
+            seek(e);
+            updateUI();
+        }
+    }, { passive: false });
+
+    // Keyboard Space
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !e.target.matches('input, textarea, button')) {
+            e.preventDefault();
+            togglePlay();
+        }
+    });
+
+    console.log('✅ TubeMax Player Ready!');
+    console.log('💡 Click "Select Video File" to upload your video.');
 </script>
-
 
 </body>
 </html>
