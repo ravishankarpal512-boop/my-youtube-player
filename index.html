@@ -1,1 +1,576 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My YouTube Player</title><style>*{box-sizing:border-box}body{margin:0;background:#101010;color:#fff;font-family:Arial,sans-serif}main{max-width:950px;margin:auto;padding:24px 16px;text-align:center}h1{font-size:28px;margin:10px 0 20px}.search{display:flex;gap:8px}input{flex:1;padding:14px;border:0;border-radius:9px;font-size:16px}button{padding:12px 17px;border:0;border-radius:9px;font-weight:bold;cursor:pointer}.play{background:#fff;color:#111}.player{margin-top:20px;background:#000;aspect-ratio:16/9;border-radius:12px;overflow:hidden}iframe{width:100%;height:100%;border:0}.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}.controls button{background:#292929;color:#fff}.msg{color:#bbb}</style></head><body><main><h1>🎬 My YouTube Player</h1><div class="search"><input id="url" placeholder="YouTube video URL paste karo"><button class="play" onclick="loadVideo()">▶ Play</button></div><div class="player"><iframe id="player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><p id="msg" class="msg">YouTube URL paste karke Play dabao.</p><div class="controls"><button onclick="setSpeed(1)">1×</button><button onclick="setSpeed(1.5)">1.5×</button><button onclick="setSpeed(2)">2×</button><button onclick="setSpeed(3)">3×</button><button onclick="setSpeed(4)">4×</button></div><p class="msg">YouTube embedded player ki supported speed hi actually apply hogi.</p></main><script>let videoId="";function getId(s){try{const u=new URL(s.trim());if(u.hostname.includes('youtu.be'))return u.pathname.split('/')[1];if(u.hostname.includes('youtube.com')){if(u.searchParams.get('v'))return u.searchParams.get('v');const p=u.pathname.split('/');if(p[1]==='shorts'||p[1]==='embed')return p[2]}}catch(e){}return null}function loadVideo(){const id=getId(document.getElementById('url').value),msg=document.getElementById('msg');if(!id){msg.textContent='❌ Valid YouTube URL dalo.';return}videoId=id;document.getElementById('player').src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?enablejsapi=1&origin='+encodeURIComponent(location.origin);msg.textContent='✅ Video load ho gaya.'}function setSpeed(n){if(!videoId){document.getElementById('msg').textContent='❌ Pehle Play karo.';return}document.getElementById('player').contentWindow.postMessage(JSON.stringify({event:'command',func:'setPlaybackRate',args:[n]}),'*');document.getElementById('msg').textContent='Requested speed: '+n+'×'}</script></body></html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TubeMax - YouTube Style Player with MX Speed</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ----- GLOBAL RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ----- MAIN CONTAINER (YouTube style card) ----- */
+        .tube-container {
+            max-width: 900px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 24px 24px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        /* ----- HEADER (YouTube like) ----- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            font-size: 30px;
+            color: #ff0000;
+            background: white;
+            border-radius: 50%;
+            padding: 6px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, #aaaaaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text span {
+            font-weight: 300;
+            color: #aaa;
+            -webkit-text-fill-color: #aaa;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            color: #ccc;
+            font-size: 20px;
+        }
+
+        .header-actions i {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .header-actions i:hover {
+            color: white;
+        }
+
+        /* ----- VIDEO PLAYER WRAPPER ----- */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            aspect-ratio: 16 / 9;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #111;
+            cursor: pointer;
+        }
+
+        /* ----- CUSTOM CONTROLS (MX Player inspired) ----- */
+        .custom-controls {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px 8px;
+            background: #222;
+            padding: 14px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #333;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .play-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2a2a2a;
+        }
+        .play-btn:hover {
+            background: #3a3a3a;
+            transform: scale(1.05);
+        }
+
+        .time-display {
+            font-size: 15px;
+            font-weight: 400;
+            color: #ccc;
+            letter-spacing: 0.3px;
+            background: #2a2a2a;
+            padding: 6px 14px;
+            border-radius: 30px;
+            white-space: nowrap;
+        }
+
+        .progress-container {
+            flex: 2;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 5px;
+            background: #444;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: height 0.15s;
+        }
+        .progress-bar:hover {
+            height: 7px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff0000, #ff4d4d);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .progress-bar .tooltip {
+            display: none;
+        }
+
+        /* ----- SPEED CONTROLS (MX style) ----- */
+        .speed-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: #2a2a2a;
+            padding: 4px 10px;
+            border-radius: 40px;
+            border: 1px solid #3a3a3a;
+        }
+
+        .speed-btn {
+            background: transparent;
+            border: none;
+            color: #bbb;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.15s;
+            min-width: 34px;
+            text-align: center;
+        }
+        .speed-btn:hover {
+            background: #3a3a3a;
+            color: white;
+        }
+        .speed-btn.active {
+            background: #ff0000;
+            color: white;
+            box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
+        }
+        .speed-btn:active {
+            transform: scale(0.92);
+        }
+
+        .volume-icon {
+            color: #ccc;
+            font-size: 18px;
+            margin-left: 4px;
+        }
+
+        /* ----- RESPONSIVE TWEAKS ----- */
+        @media (max-width: 700px) {
+            .tube-container {
+                padding: 16px;
+            }
+            .custom-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                border-radius: 28px;
+                padding: 16px;
+            }
+            .left-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .speed-controls {
+                justify-content: center;
+                padding: 6px 8px;
+            }
+            .time-display {
+                font-size: 13px;
+            }
+            .logo-text {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .speed-btn {
+                font-size: 12px;
+                padding: 4px 6px;
+                min-width: 28px;
+            }
+            .play-btn {
+                font-size: 20px;
+                width: 34px;
+                height: 34px;
+            }
+        }
+
+        /* small extra */
+        .footer-note {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            letter-spacing: 0.3px;
+        }
+        .footer-note a {
+            color: #777;
+            text-decoration: none;
+        }
+        .footer-note a:hover {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<div class="tube-container">
+
+    <!-- HEADER: YouTube style -->
+    <div class="header">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fab fa-youtube"></i></div>
+            <div class="logo-text">Tube<span>Max</span></div>
+        </div>
+        <div class="header-actions">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-ellipsis-v"></i>
+        </div>
+    </div>
+
+    <!-- VIDEO PLAYER -->
+    <div class="video-wrapper">
+        <video id="videoPlayer" preload="metadata" playsinline>
+            <!-- Sample video from YouTube (public domain / creative commons) -->
+            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- CUSTOM CONTROLS (MX Player inspired) -->
+    <div class="custom-controls">
+        <!-- Left: Play + Time -->
+        <div class="left-controls">
+            <button class="play-btn" id="playBtn" aria-label="Play/Pause">
+                <i class="fas fa-play"></i>
+            </button>
+            <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Speed Controls (2x – 8x) + Volume hint -->
+        <div class="speed-controls" id="speedControls">
+            <button class="speed-btn" data-speed="1.0">1x</button>
+            <button class="speed-btn" data-speed="2.0">2x</button>
+            <button class="speed-btn" data-speed="3.0">3x</button>
+            <button class="speed-btn" data-speed="4.0">4x</button>
+            <button class="speed-btn" data-speed="5.0">5x</button>
+            <button class="speed-btn" data-speed="6.0">6x</button>
+            <button class="speed-btn" data-speed="7.0">7x</button>
+            <button class="speed-btn" data-speed="8.0">8x</button>
+            <i class="fas fa-volume-up volume-icon"></i>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-code"></i> GitHub Ready — Smooth MX-style speed up to 8x
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- DOM ELEMENTS -----
+        const video = document.getElementById('videoPlayer');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = playBtn.querySelector('i');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const progressBar = document.getElementById('progressBar');
+        const speedBtns = document.querySelectorAll('.speed-btn');
+
+        // ----- STATE -----
+        let isDragging = false;
+
+        // ----- FORMAT TIME (mm:ss) -----
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds < 0) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // ----- UPDATE UI (time & progress) -----
+        function updateTimeAndProgress() {
+            if (!video.duration || isNaN(video.duration)) {
+                timeDisplay.textContent = `0:00 / 0:00`;
+                progressFill.style.width = '0%';
+                return;
+            }
+            const current = video.currentTime;
+            const duration = video.duration;
+            const percent = (current / duration) * 100;
+            timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+            progressFill.style.width = `${Math.min(percent, 100)}%`;
+        }
+
+        // ----- TOGGLE PLAY/PAUSE -----
+        function togglePlay() {
+            if (video.paused) {
+                video.play().catch(err => console.warn('Play error:', err));
+            } else {
+                video.pause();
+            }
+        }
+
+        // ----- UPDATE PLAY BUTTON ICON -----
+        function updatePlayIcon() {
+            if (video.paused) {
+                playIcon.className = 'fas fa-play';
+            } else {
+                playIcon.className = 'fas fa-pause';
+            }
+        }
+
+        // ----- SET SPEED & UI ACTIVE -----
+        function setSpeed(speed) {
+            video.playbackRate = speed;
+            speedBtns.forEach(btn => {
+                const val = parseFloat(btn.dataset.speed);
+                btn.classList.toggle('active', Math.abs(val - speed) < 0.01);
+            });
+        }
+
+        // ----- HANDLE PROGRESS SEEK (mouse & touch) -----
+        function seekFromEvent(e) {
+            const rect = progressBar.getBoundingClientRect();
+            let clientX = e.clientX;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+            }
+            let x = (clientX - rect.left) / rect.width;
+            x = Math.min(Math.max(x, 0), 1);
+            if (video.duration && !isNaN(video.duration)) {
+                video.currentTime = x * video.duration;
+            }
+            // update fill immediately for smooth feel
+            progressFill.style.width = `${x * 100}%`;
+            // update time display
+            if (video.duration) {
+                const seekTime = x * video.duration;
+                timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(video.duration)}`;
+            }
+        }
+
+        // ----- EVENT LISTENERS -----
+
+        // 1. Play / Pause
+        playBtn.addEventListener('click', togglePlay);
+        video.addEventListener('click', togglePlay);
+        video.addEventListener('play', updatePlayIcon);
+        video.addEventListener('pause', updatePlayIcon);
+        video.addEventListener('ended', () => {
+            updatePlayIcon();
+            // reset progress to end
+            updateTimeAndProgress();
+        });
+
+        // 2. Timeupdate
+        video.addEventListener('timeupdate', () => {
+            if (!isDragging) {
+                updateTimeAndProgress();
+            }
+        });
+
+        // 3. Load metadata
+        video.addEventListener('loadedmetadata', () => {
+            updateTimeAndProgress();
+            // set default speed to 1x (active)
+            setSpeed(1.0);
+        });
+
+        // 4. Speed buttons
+        speedBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const speed = parseFloat(this.dataset.speed);
+                setSpeed(speed);
+                // (optional) small haptic feedback
+            });
+        });
+
+        // 5. Progress bar seeking (mouse)
+        progressBar.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            seekFromEvent(e);
+            // pause video while scrubbing? we keep it playing for smoothness (MX style)
+            // but we don't pause. if you want, you can do: video.pause(); 
+            // but MX player continues playing while scrubbing, so we keep.
+        });
+
+        window.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                seekFromEvent(e);
+                // update time during drag
+            }
+        });
+
+        window.addEventListener('mouseup', function(e) {
+            if (isDragging) {
+                isDragging = false;
+                // final seek
+                seekFromEvent(e);
+                // ensure time is accurate
+                updateTimeAndProgress();
+            }
+        });
+
+        // 6. Touch events for mobile
+        progressBar.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            isDragging = true;
+            seekFromEvent(e);
+        }, { passive: false });
+
+        progressBar.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (isDragging) {
+                seekFromEvent(e);
+            }
+        }, { passive: false });
+
+        progressBar.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            if (isDragging) {
+                isDragging = false;
+                seekFromEvent(e);
+                updateTimeAndProgress();
+            }
+        }, { passive: false });
+
+        // 7. Keyboard shortcut (space for play/pause)
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            }
+        });
+
+        // 8. When video can play, ensure time display
+        video.addEventListener('canplay', updateTimeAndProgress);
+        video.addEventListener('progress', updateTimeAndProgress);
+
+        // 9. Additional: handle errors / fallback
+        video.addEventListener('error', function() {
+            console.warn('Video error, but sample should work.');
+            timeDisplay.textContent = '⚠️ Video error';
+        });
+
+        // 10. Extra: if user clicks on speed, we want to keep active highlight
+        // set default speed to 1x on load (after metadata)
+        // already handled in loadedmetadata
+
+        // 11. Preload: set initial active speed (1x) after a tiny delay if metadata not fired
+        setTimeout(() => {
+            if (video.readyState >= 1) {
+                setSpeed(1.0);
+            }
+        }, 500);
+
+        // 12. For better UX: when video ends, show play icon
+        video.addEventListener('ended', () => {
+            playIcon.className = 'fas fa-play';
+        });
+
+        console.log('🚀 TubeMax ready — Smooth MX style speed up to 8x');
+    })();
+</script>
+
+</body>
+</html>
