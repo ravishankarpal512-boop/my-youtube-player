@@ -1,391 +1,359 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TubeMax Player</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ravi Study</title>
 
-        body {
-            background: #0f0f0f;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+body{background:#f5f6fa;color:#222}
+header{height:65px;background:#fff;display:flex;align-items:center;
+justify-content:space-between;padding:0 5%;box-shadow:0 2px 10px #ddd;
+position:sticky;top:0;z-index:10}
+.logo{font-size:25px;font-weight:bold}
+.logo span{color:#ff4d00}
+nav{display:flex;gap:22px}
+nav a{text-decoration:none;color:#222;font-weight:bold}
+.menu{display:none;font-size:25px}
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 20px;
-        }
+.hero{padding:55px 5%;background:linear-gradient(135deg,#fff1e8,#fff)}
+.hero h1{font-size:40px;margin-bottom:12px}
+.hero h1 span{color:#ff4d00}
+.hero p{color:#666;font-size:17px;line-height:1.6}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+.search{margin-top:25px;display:flex;max-width:600px}
+.search input{flex:1;padding:15px;border:1px solid #ddd;
+border-radius:8px 0 0 8px}
+.search button{padding:15px 25px;border:0;background:#ff4d00;
+color:white;border-radius:0 8px 8px 0}
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff0000;
-        }
+section{padding:40px 5%}
+.title{margin-bottom:25px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:white;border-radius:15px;padding:22px;
+box-shadow:0 3px 15px #ddd}
+.card h3{margin:10px 0}
+.card p{color:#666;line-height:1.5}
+.card button{width:100%;margin-top:18px;padding:12px;
+border:0;border-radius:8px;background:#ff4d00;color:white;
+cursor:pointer}
 
-        .logo span {
-            color: white;
-        }
+.video-box{max-width:900px;margin:auto;background:#111;border-radius:15px;
+overflow:hidden}
+video{width:100%;display:block}
+.video-controls{padding:12px;display:flex;gap:10px;align-items:center;
+background:#181818;color:white}
+.video-controls button{background:#333;color:white;border:0;
+padding:8px 12px;border-radius:5px}
+.video-controls input{flex:1}
+.video-controls select{background:#333;color:white;border:0;padding:7px}
 
-        .video-wrapper {
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            position: relative;
-        }
+.notice{background:white;padding:25px;border-radius:12px;
+box-shadow:0 2px 10px #ddd}
 
-        #videoPlayer {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+footer{background:#151515;color:white;text-align:center;padding:30px}
 
-        .controls {
-            margin-top: 15px;
-            background: #222;
-            padding: 15px;
-            border-radius: 30px;
-        }
+@media(max-width:800px){
+.cards{grid-template-columns:repeat(2,1fr)}
+nav{display:none;position:absolute;right:0;top:65px;background:white;
+padding:20px;width:200px;flex-direction:column}
+nav.active{display:flex}
+.menu{display:block}
+.hero h1{font-size:32px}
+}
 
-        .top-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .play-btn {
-            background: #333;
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .play-btn:hover {
-            background: #444;
-        }
-
-        .time {
-            color: #aaa;
-            font-size: 14px;
-            min-width: 100px;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 5px;
-            background: #444;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: #ff0000;
-            border-radius: 5px;
-        }
-
-        .speed-controls {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-            justify-content: center;
-        }
-
-        .speed-btn {
-            background: #333;
-            border: none;
-            color: #aaa;
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .speed-btn:hover {
-            background: #444;
-            color: white;
-        }
-
-        .speed-btn.active {
-            background: #ff0000;
-            color: white;
-        }
-
-        .file-input-wrapper {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .file-input-wrapper input {
-            display: none;
-        }
-
-        .file-input-wrapper label {
-            background: #ff0000;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            display: inline-block;
-            font-weight: bold;
-        }
-
-        .file-input-wrapper label:hover {
-            background: #cc0000;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 12px;
-            color: #555;
-            font-size: 12px;
-        }
-    </style>
+@media(max-width:500px){
+.cards{grid-template-columns:1fr}
+.search{flex-direction:column}
+.search input,.search button{border-radius:8px;margin-bottom:8px}
+.video-controls{flex-wrap:wrap}
+}
+</style>
 </head>
+
 <body>
 
-<div class="container">
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">▶ <span>TubeMax</span></div>
-        <div style="color:#666; font-size:14px;">⚡ 8x Speed</div>
-    </div>
+<header>
+<div class="logo">Ravi <span>Study</span></div>
 
-    <!-- Video Player -->
-    <div class="video-wrapper">
-        <video id="videoPlayer" controls style="display:none;"></video>
-        <div id="placeholder" style="display:flex; justify-content:center; align-items:center; height:100%; color:#666; font-size:18px; flex-direction:column; gap:10px;">
-            <div style="font-size:50px;">🎬</div>
-            <div>Click below to select video</div>
-        </div>
-    </div>
+<div class="menu" onclick="menu()">☰</div>
 
-    <!-- Controls -->
-    <div class="controls">
-        <div class="top-controls">
-            <button class="play-btn" id="playBtn">▶</button>
-            <span class="time" id="timeDisplay">0:00 / 0:00</span>
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
+<nav id="nav">
+<a href="#home">Home</a>
+<a href="#courses">Courses</a>
+<a href="#videos">Videos</a>
+<a href="#tests">Tests</a>
+<a href="#notes">Notes</a>
+</nav>
+</header>
 
-        <div class="speed-controls">
-            <button class="speed-btn active" data-speed="1">1x</button>
-            <button class="speed-btn" data-speed="2">2x</button>
-            <button class="speed-btn" data-speed="3">3x</button>
-            <button class="speed-btn" data-speed="4">4x</button>
-            <button class="speed-btn" data-speed="5">5x</button>
-            <button class="speed-btn" data-speed="6">6x</button>
-            <button class="speed-btn" data-speed="7">7x</button>
-            <button class="speed-btn" data-speed="8">8x</button>
-        </div>
-    </div>
 
-    <!-- File Upload -->
-    <div class="file-input-wrapper">
-        <input type="file" id="fileInput" accept="video/*">
-        <label for="fileInput">📁 Select Video File</label>
-    </div>
+<section class="hero" id="home">
+<h1>Welcome to <span>Ravi Study</span></h1>
+<p>
+Learn smarter. Prepare better. Achieve your goal.
+Courses, videos, notes and tests — all in one place.
+</p>
 
-    <div class="footer">
-        <i class="fas fa-code"></i> GitHub Ready — MX-style speed up to 8x
-    </div>
+<div class="search">
+<input id="search" placeholder="Search courses, videos, notes...">
+<button onclick="searchData()">Search</button>
+</div>
+</section>
+
+
+<section id="courses">
+<h2 class="title">📚 Popular Courses</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🎯 CDS Preparation</h3>
+<p>CDS exam preparation, GK, English and practice material.</p>
+<button onclick="showMessage('CDS Preparation')">Open Course</button>
 </div>
 
+<div class="card">
+<h3>📖 SSC Preparation</h3>
+<p>SSC related study material and practice.</p>
+<button onclick="showMessage('SSC Preparation')">Open Course</button>
+</div>
+
+<div class="card">
+<h3>🧠 General Knowledge</h3>
+<p>Important GK and current affairs.</p>
+<button onclick="showMessage('General Knowledge')">Open Course</button>
+</div>
+
+<div class="card">
+<h3>💻 Computer</h3>
+<p>Computer subjects and competitive exam preparation.</p>
+<button onclick="showMessage('Computer')">Open Course</button>
+</div>
+
+</div>
+</section>
+
+
+<section id="videos">
+<h2 class="title">🎥 Video Player</h2>
+
+<div class="video-box">
+
+<video id="player" preload="metadata">
+<source src="" type="video/mp4">
+Your browser does not support video.
+</video>
+
+<div class="video-controls">
+
+<button onclick="playPause()" id="playBtn">▶</button>
+
+<button onclick="backward()">↶ 10</button>
+
+<button onclick="forward()">10 ↷</button>
+
+<input type="range" id="progress" value="0">
+
+<button onclick="mute()">🔊</button>
+
+<select id="speed" onchange="changeSpeed()">
+<option value="0.5">0.5x</option>
+<option value="1" selected>1x</option>
+<option value="1.25">1.25x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
+
+<button onclick="fullscreen()">⛶</button>
+
+</div>
+</div>
+
+<br>
+
+<div class="notice">
+<h3>Video URL</h3>
+<br>
+<input id="videoURL"
+placeholder="Paste your MP4 video URL here"
+style="width:100%;padding:13px;border:1px solid #ddd;border-radius:8px">
+
+<button onclick="loadVideo()"
+style="margin-top:12px;padding:12px 20px;background:#ff4d00;
+color:white;border:0;border-radius:8px">
+Load Video
+</button>
+</div>
+</section>
+
+
+<section id="tests">
+<h2 class="title">📝 Test Series</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>CDS Mock Test</h3>
+<p>Practice questions for CDS.</p>
+<button onclick="showMessage('CDS Mock Test')">Start Test</button>
+</div>
+
+<div class="card">
+<h3>SSC Mock Test</h3>
+<p>Improve speed and accuracy.</p>
+<button onclick="showMessage('SSC Mock Test')">Start Test</button>
+</div>
+
+<div class="card">
+<h3>Daily Quiz</h3>
+<p>Test your knowledge every day.</p>
+<button onclick="showMessage('Daily Quiz')">Start Quiz</button>
+</div>
+
+</div>
+</section>
+
+
+<section id="notes">
+<h2 class="title">📚 Study Notes</h2>
+
+<div class="notice">
+<h3>Important Notes</h3>
+<br>
+<p>
+Yahan tum apne PDF notes aur study material ke links add kar sakte ho.
+</p>
+</div>
+</section>
+
+
+<footer>
+<h3>Ravi Study</h3>
+<br>
+<p>Learn • Practice • Succeed</p>
+<br>
+<p>© 2026 Ravi Study</p>
+</footer>
+
+
 <script>
-    // ========== DOM ELEMENTS ==========
-    const video = document.getElementById('videoPlayer');
-    const placeholder = document.getElementById('placeholder');
-    const playBtn = document.getElementById('playBtn');
-    const timeDisplay = document.getElementById('timeDisplay');
-    const progressFill = document.getElementById('progressFill');
-    const progressBar = document.getElementById('progressBar');
-    const fileInput = document.getElementById('fileInput');
-    const speedBtns = document.querySelectorAll('.speed-btn');
 
-    let isDragging = false;
+const player = document.getElementById("player");
+const progress = document.getElementById("progress");
+const playBtn = document.getElementById("playBtn");
 
-    // ========== HELPER FUNCTIONS ==========
-    function formatTime(sec) {
-        if (isNaN(sec) || sec < 0) return '0:00';
-        const m = Math.floor(sec / 60);
-        const s = Math.floor(sec % 60);
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    }
+function menu(){
+document.getElementById("nav").classList.toggle("active");
+}
 
-    function updateUI() {
-        if (!video.duration || isNaN(video.duration)) {
-            timeDisplay.textContent = '0:00 / 0:00';
-            progressFill.style.width = '0%';
-            return;
-        }
-        const current = video.currentTime;
-        const duration = video.duration;
-        const percent = (current / duration) * 100;
-        timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-        progressFill.style.width = `${Math.min(percent, 100)}%`;
-    }
+function showMessage(name){
+alert(name + " page will open here.");
+}
 
-    function togglePlay() {
-        if (video.paused) {
-            video.play().catch(err => console.log('Play error:', err));
-        } else {
-            video.pause();
-        }
-    }
+function playPause(){
 
-    function updatePlayIcon() {
-        playBtn.textContent = video.paused ? '▶' : '⏸';
-    }
+if(player.paused){
+player.play();
+playBtn.innerText="⏸";
+}else{
+player.pause();
+playBtn.innerText="▶";
+}
 
-    function setSpeed(speed) {
-        video.playbackRate = speed;
-        speedBtns.forEach(btn => {
-            const val = parseFloat(btn.dataset.speed);
-            btn.classList.toggle('active', Math.abs(val - speed) < 0.01);
-        });
-    }
+}
 
-    function seek(e) {
-        const rect = progressBar.getBoundingClientRect();
-        let clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        if (!clientX) return;
-        let x = (clientX - rect.left) / rect.width;
-        x = Math.min(Math.max(x, 0), 1);
-        if (video.duration && !isNaN(video.duration)) {
-            video.currentTime = x * video.duration;
-        }
-        progressFill.style.width = `${x * 100}%`;
-        if (video.duration) {
-            timeDisplay.textContent = `${formatTime(x * video.duration)} / ${formatTime(video.duration)}`;
-        }
-    }
+function backward(){
+player.currentTime=Math.max(0,player.currentTime-10);
+}
 
-    // ========== FILE UPLOAD ==========
-    fileInput.addEventListener('change', function(e) {
-        const file = this.files[0];
-        if (!file) return;
+function forward(){
+player.currentTime=Math.min(player.duration,player.currentTime+10);
+}
 
-        const url = URL.createObjectURL(file);
-        video.src = url;
-        video.style.display = 'block';
-        placeholder.style.display = 'none';
-        
-        video.load();
-        video.play().catch(err => console.log('Play error:', err));
-        
-        // Reset speed to 1x
-        setSpeed(1);
-    });
+function mute(){
+player.muted=!player.muted;
+}
 
-    // ========== EVENT LISTENERS ==========
-    playBtn.addEventListener('click', togglePlay);
-    video.addEventListener('click', togglePlay);
-    video.addEventListener('play', updatePlayIcon);
-    video.addEventListener('pause', updatePlayIcon);
+function changeSpeed(){
+player.playbackRate=
+Number(document.getElementById("speed").value);
+}
 
-    video.addEventListener('timeupdate', () => {
-        if (!isDragging) updateUI();
-    });
+function fullscreen(){
 
-    video.addEventListener('loadedmetadata', () => {
-        updateUI();
-        setSpeed(1);
-    });
+if(player.requestFullscreen){
+player.requestFullscreen();
+}
 
-    video.addEventListener('ended', () => {
-        updatePlayIcon();
-        updateUI();
-    });
+}
 
-    // Speed Buttons
-    speedBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            setSpeed(parseFloat(btn.dataset.speed));
-        });
-    });
+player.addEventListener("timeupdate",function(){
 
-    // Progress Bar - Mouse
-    progressBar.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        seek(e);
-    });
+if(player.duration){
+progress.value=(player.currentTime/player.duration)*100;
+}
 
-    window.addEventListener('mousemove', (e) => {
-        if (isDragging) seek(e);
-    });
+});
 
-    window.addEventListener('mouseup', (e) => {
-        if (isDragging) {
-            isDragging = false;
-            seek(e);
-            updateUI();
-        }
-    });
+progress.addEventListener("input",function(){
 
-    // Progress Bar - Touch
-    progressBar.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        isDragging = true;
-        seek(e);
-    }, { passive: false });
+if(player.duration){
+player.currentTime=(progress.value/100)*player.duration;
+}
 
-    progressBar.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (isDragging) seek(e);
-    }, { passive: false });
+});
 
-    progressBar.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        if (isDragging) {
-            isDragging = false;
-            seek(e);
-            updateUI();
-        }
-    }, { passive: false });
+player.addEventListener("play",()=>{
+playBtn.innerText="⏸";
+});
 
-    // Keyboard Space
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && !e.target.matches('input, textarea, button')) {
-            e.preventDefault();
-            togglePlay();
-        }
-    });
+player.addEventListener("pause",()=>{
+playBtn.innerText="▶";
+});
 
-    console.log('✅ TubeMax Player Ready!');
-    console.log('💡 Click "Select Video File" to upload your video.');
+function loadVideo(){
+
+let url=document.getElementById("videoURL").value.trim();
+
+if(!url){
+alert("Video URL paste karo.");
+return;
+}
+
+player.src=url;
+player.load();
+player.play();
+
+localStorage.setItem("raviStudyVideo",url);
+
+}
+
+window.addEventListener("load",()=>{
+
+let saved=localStorage.getItem("raviStudyVideo");
+
+if(saved){
+document.getElementById("videoURL").value=saved;
+player.src=saved;
+}
+
+});
+
+function searchData(){
+
+let value=document.getElementById("search").value.trim();
+
+if(!value){
+alert("Search box me kuch likho.");
+return;
+}
+
+alert("Searching: "+value);
+
+}
+
 </script>
 
 </body>
